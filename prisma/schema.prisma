@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -8,4 +5,161 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+model ClientAddress {
+  id         Int      @id @default(autoincrement())
+  address    String?  @db.VarChar(255)
+  city       String?  @db.VarChar(255)
+  zipcode    String?  @db.VarChar(255)
+  title      String?  @db.VarChar(255)
+  note       String?  @db.VarChar(255)
+  state      String?  @db.VarChar(255)
+  isShipping Boolean? @db.Boolean
+  isBilling  Boolean? @db.Boolean
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  client   Client @relation(fields: [clientId], references: [id])
+  clientId Int
+}
+
+model Contact {
+  id        Int      @id @default(autoincrement())
+  name      String?  @db.VarChar(255)
+  phone     String?  @db.VarChar(255)
+  email     String?  @db.VarChar(255)
+  fax       String?  @db.VarChar(255)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  client   Client @relation(fields: [clientId], references: [id])
+  clientId Int
+}
+
+model Client {
+  id            Int      @id @default(autoincrement())
+  name          String?  @db.VarChar(255)
+  accountOwner  String?  @db.VarChar(255)
+  accountNumber String?  @db.VarChar(255)
+  accountType   String?  @db.VarChar(255)
+  businessType  String?  @db.VarChar(255)
+  description   String?
+  taxId         String?  @db.VarChar(255)
+  phone         String?  @db.VarChar(255)
+  email         String?  @db.VarChar(255)
+  fax           String?  @db.VarChar(255)
+  discount      Int?
+  paymentTerms  String?  @db.VarChar(255)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  addresses ClientAddress[]
+  contacts  Contact[]
+  orders    PurchaseOrder[]
+}
+
+model PurchaseOrder {
+  id           Int      @id @default(autoincrement())
+  poNumber     String?  @db.VarChar(255)
+  salesRepName String?  @db.VarChar(255)
+  paymentTerms String?  @db.VarChar(255)
+  status       String?  @db.VarChar(255)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  client   Client            @relation(fields: [clientId], references: [id])
+  clientId Int
+  products ProductsInOrder[]
+  invoice  Invoice?
+}
+
+model ProductsInOrder {
+  id          Int      @id @default(autoincrement())
+  description String?  @db.VarChar(255)
+  quantity    Int?
+  price       Int?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  order     PurchaseOrder @relation(fields: [orderId], references: [id])
+  orderId   Int
+  product   Product       @relation(fields: [productId], references: [id])
+  productId Int
+}
+
+model Product {
+  id                  Int       @id @default(autoincrement())
+  type                String?   @db.VarChar(255)
+  modelNumber         String?   @db.VarChar(255)
+  name                String?   @db.VarChar(255)
+  note                String?
+  retailPrice         Decimal?  @db.Decimal(10, 2)
+  wholesalePrice      Decimal?  @db.Decimal(10, 2)
+  cost                Decimal?  @db.Decimal(10, 2)
+  stockQuantity       Int?
+  nextRestockDate     DateTime? @db.Date
+  nextRestockQuantity Int?
+  bulbCount           Int?
+  finish              String?   @db.VarChar(255)
+  grossWeight         Decimal?  @db.Decimal(10, 2)
+  pkgLength           Decimal?  @db.Decimal(10, 2)
+  pkgWidth            Decimal?  @db.Decimal(10, 2)
+  pkgHeight           Decimal?  @db.Decimal(10, 2)
+  netWeight           Decimal?  @db.Decimal(10, 2)
+  unitLength          Decimal?  @db.Decimal(10, 2)
+  unitWidth           Decimal?  @db.Decimal(10, 2)
+  unitHeight          Decimal?  @db.Decimal(10, 2)
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+
+  orders    ProductsInOrder[]
+  shipments ProductsInShipment[]
+}
+
+model FulfillmentOrder {
+  id        Int      @id @default(autoincrement())
+  poNumber  String?  @db.VarChar(255)
+  status    String?  @db.VarChar(255)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  shipments Shipment[]
+}
+
+model Shipment {
+  id               Int       @id @default(autoincrement())
+  deliveredDate    DateTime? @db.Date
+  status           String?   @db.VarChar(255)
+  trackingNumber   String?   @db.VarChar(255)
+  shippingProvider String?   @db.VarChar(255)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  shipment   FulfillmentOrder     @relation(fields: [shipmentId], references: [id])
+  shipmentId Int
+  products   ProductsInShipment[]
+}
+
+model ProductsInShipment {
+  id          Int      @id @default(autoincrement())
+  description String?  @db.VarChar(255)
+  quantity    Int?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  shipment   Shipment @relation(fields: [shipmentId], references: [id])
+  shipmentId Int
+  product    Product  @relation(fields: [productId], references: [id])
+  productId  Int
+}
+
+model Invoice {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  purchaseOrder   PurchaseOrder @relation(fields: [purchaseOrderId], references: [id])
+  purchaseOrderId Int           @unique
 }
