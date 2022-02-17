@@ -14,22 +14,22 @@ import { ProductService } from './product.service';
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
-  @Get('product/:id')
+  @Get('/:id')
   async getProduct(@Param('id') id: string): Promise<ProductModel> {
     return this.productService.fetchOne({ id: Number(id) });
   }
 
-  @Get('product')
+  @Get('/')
   async getAllProducts(): Promise<ProductModel[]> {
     return this.productService.fetchAll({});
   }
 
-  @Post('product')
+  @Post('/')
   async createProduct(@Body() data: ProductModel): Promise<ProductModel> {
     return this.productService.createProduct(data);
   }
 
-  @Put('product/:id')
+  @Put('/:id')
   async updateProduct(
     @Param('id') id: string,
     @Body() data: ProductModel,
@@ -40,7 +40,7 @@ export class ProductController {
     });
   }
 
-  @Delete('product/:id')
+  @Delete('/:id')
   async deleteProduct(@Param('id') id: string): Promise<ProductModel> {
     return this.productService.deleteProduct({ id: Number(id) });
   }

@@ -1,6 +1,9 @@
 {
   "name": "terracotta-app",
   "version": "0.0.1",
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
+  },
   "description": "",
   "author": "",
   "private": true,
@@ -9,6 +12,7 @@
     "prebuild": "rimraf dist",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "seed": "ts-node prisma/seed.ts",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
@@ -31,6 +35,7 @@
     "rxjs": "^7.2.0"
   },
   "devDependencies": {
+    "@faker-js/faker": "^6.0.0-alpha.6",
     "@nestjs/cli": "^8.0.0",
     "@nestjs/schematics": "^8.0.0",
     "@nestjs/testing": "^8.0.0",
