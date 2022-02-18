@@ -1,12 +1,29 @@
 import { PrismaClient } from '@prisma/client';
 import { products } from '../utils/seed/products.seed';
+import { contacts } from '../utils/seed/contacts.seed';
 
 const prisma = new PrismaClient();
 
 async function main() {
-  // const manyProducts = await prisma.product.createMany({
-  //   data: products,
-  // });
+  const productCollection = await prisma.$transaction(
+    products.map((product) =>
+      prisma.product.upsert({
+        where: { modelNumber: product.modelNumber },
+        update: {},
+        create: product,
+      }),
+    ),
+  );
+
+  const contactCollection = await prisma.$transaction(
+    contacts.map((contact) =>
+      prisma.contact.upsert({
+        where: { email: contact.email },
+        update: {},
+        create: contact,
+      }),
+    ),
+  );
 
   const client = await prisma.client.upsert({
     where: { accountNumber: 'KNVA' },

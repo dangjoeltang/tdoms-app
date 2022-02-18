@@ -28,13 +28,13 @@ model Contact {
   id        Int      @id @default(autoincrement())
   name      String?  @db.VarChar(255)
   phone     String?  @db.VarChar(255)
-  email     String?  @db.VarChar(255)
+  email     String?  @unique @db.VarChar(255)
   fax       String?  @db.VarChar(255)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  client   Client @relation(fields: [clientId], references: [id])
-  clientId Int
+  client   Client? @relation(fields: [clientId], references: [id])
+  clientId Int?
 }
 
 model Client {
@@ -112,7 +112,6 @@ model Product {
   unitHeight          Decimal?  @db.Decimal(10, 2)
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
-
 
   orders    ProductsInOrder[]
   shipments ProductsInShipment[]

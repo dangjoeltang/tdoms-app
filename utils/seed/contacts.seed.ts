@@ -1,0 +1,92 @@
+export const contacts = [
+  {
+    name: 'Kristoforo Caville',
+    phone: '140-207-4100',
+    email: 'kcaville0@tmall.com',
+    fax: null,
+  },
+  {
+    name: 'Steffane Yole',
+    phone: '774-971-2340',
+    email: 'syole1@youku.com',
+    fax: '832-817-7605',
+  },
+  {
+    name: 'Moritz Krug',
+    phone: '979-894-9419',
+    email: 'mkrug2@tuttocitta.it',
+    fax: '739-677-2391',
+  },
+  {
+    name: 'Abbye Almey',
+    phone: '348-573-0376',
+    email: 'aalmey3@lulu.com',
+    fax: null,
+  },
+  {
+    name: 'Sybille Van Hove',
+    phone: '684-720-1930',
+    email: 'svan4@adobe.com',
+    fax: '354-882-9832',
+  },
+  {
+    name: 'Miguelita Burnup',
+    phone: '566-560-5253',
+    email: 'mburnup5@ifeng.com',
+    fax: '526-359-9061',
+  },
+  {
+    name: 'Justina Guido',
+    phone: '285-302-1997',
+    email: 'jguido6@yahoo.com',
+    fax: '963-375-5673',
+  },
+  {
+    name: 'Dina Christal',
+    phone: '331-947-4150',
+    email: 'dchristal7@google.fr',
+    fax: null,
+  },
+  {
+    name: 'Cazzie Aylmer',
+    phone: '478-452-3117',
+    email: 'caylmer8@twitter.com',
+    fax: null,
+  },
+  {
+    name: 'Lloyd Gontier',
+    phone: '443-356-9460',
+    email: 'lgontier9@bing.com',
+    fax: null,
+  },
+  {
+    name: 'Claudie Purselow',
+    phone: '769-974-5573',
+    email: 'cpurselowa@youku.com',
+    fax: null,
+  },
+  {
+    name: 'Pattie Kenworthey',
+    phone: '424-776-9980',
+    email: 'pkenwortheyb@creativecommons.org',
+    fax: null,
+  },
+  {
+    name: 'Andriana Matashkin',
+    phone: '762-607-7666',
+    email: 'amatashkinc@yahoo.co.jp',
+    fax: '800-724-9472',
+  },
+  {
+    name: 'Birgitta Baskwell',
+    phone: '877-213-3021',
+    email: 'bbaskwelld@jugem.jp',
+    fax: null,
+  },
+  {
+    name: 'Myrtie Calcott',
+    phone: '645-835-2069',
+    email: 'mcalcotte@dailymotion.com',
+    fax: null,
+  },
+];
