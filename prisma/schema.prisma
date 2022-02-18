@@ -11,10 +11,10 @@ model ClientAddress {
   id         Int      @id @default(autoincrement())
   address    String?  @db.VarChar(255)
   city       String?  @db.VarChar(255)
+  state      String?  @db.VarChar(255)
   zipcode    String?  @db.VarChar(255)
   title      String?  @db.VarChar(255)
   note       String?  @db.VarChar(255)
-  state      String?  @db.VarChar(255)
   isShipping Boolean? @db.Boolean
   isBilling  Boolean? @db.Boolean
   createdAt  DateTime @default(now())

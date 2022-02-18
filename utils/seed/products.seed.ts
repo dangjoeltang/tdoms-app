@@ -1,5 +1,3 @@
-import { Product } from '@prisma/client';
-
 export const products = [
   {
     type: 'lighting',
