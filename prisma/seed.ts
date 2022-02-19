@@ -6,13 +6,23 @@ const prisma = new PrismaClient();
 
 async function main() {
   const productCollection = await prisma.$transaction(
-    products.map((product) =>
-      prisma.product.upsert({
+    products.map((productSeed) => {
+      const { retailPrice, wholesalePrice, cost, ...product } = productSeed;
+      return prisma.product.upsert({
         where: { modelNumber: product.modelNumber },
         update: {},
-        create: product,
-      }),
-    ),
+        create: {
+          ...product,
+          pricing: {
+            create: {
+              retailPrice: retailPrice,
+              wholesalePrice: wholesalePrice,
+              cost: cost,
+            },
+          },
+        },
+      });
+    }),
   );
 
   const contactCollection = await prisma.$transaction(

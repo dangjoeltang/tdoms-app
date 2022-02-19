@@ -6,6 +6,9 @@ import {
   Body,
   Put,
   Delete,
+  Query,
+  ParseBoolPipe,
+  DefaultValuePipe,
 } from '@nestjs/common';
 import { Product as ProductModel } from '@prisma/client';
 import { ProductService } from './product.service';
@@ -20,8 +23,16 @@ export class ProductController {
   }
 
   @Get('/')
-  async getAllProducts(): Promise<ProductModel[]> {
-    return this.productService.fetchAll({});
+  async getManyProducts(
+    @Query('includePricing', new DefaultValuePipe(false), ParseBoolPipe)
+    includePricing?: boolean,
+  ): Promise<ProductModel[]> {
+    const params = {
+      include: {
+        pricing: includePricing,
+      },
+    };
+    return this.productService.fetchAll(params);
   }
 
   @Post('/')

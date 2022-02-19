@@ -94,9 +94,6 @@ model Product {
   modelNumber         String?   @unique @db.VarChar(255)
   name                String?   @db.VarChar(255)
   note                String?
-  retailPrice         Decimal?  @db.Decimal(10, 2)
-  wholesalePrice      Decimal?  @db.Decimal(10, 2)
-  cost                Decimal?  @db.Decimal(10, 2)
   stockQuantity       Int?
   nextRestockDate     DateTime? @db.Date
   nextRestockQuantity Int?
@@ -113,8 +110,21 @@ model Product {
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
 
+  pricing   ProductPricing?
   orders    ProductsInOrder[]
   shipments ProductsInShipment[]
+}
+
+model ProductPricing {
+  id             Int      @id @default(autoincrement())
+  retailPrice    Decimal? @db.Decimal(10, 2)
+  wholesalePrice Decimal? @db.Decimal(10, 2)
+  cost           Decimal? @db.Decimal(10, 2)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  product   Product @relation(fields: [productId], references: [id])
+  productId Int     @unique
 }
 
 model FulfillmentOrder {
