@@ -10,7 +10,7 @@ import {
 import { ClientService } from './client.service';
 import { Client as ClientModel } from '@prisma/client';
 
-@Controller('client')
+@Controller('clients')
 export class ClientController {
   constructor(private readonly clientService: ClientService) {}
 

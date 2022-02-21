@@ -68,10 +68,11 @@ model PurchaseOrder {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  client   Client            @relation(fields: [clientId], references: [id])
-  clientId Int
-  products ProductsInOrder[]
-  invoice  Invoice?
+  client       Client            @relation(fields: [clientId], references: [id])
+  clientId     Int
+  products     ProductsInOrder[]
+  invoice      Invoice?
+  fullfillment FulfillmentOrder?
 }
 
 model ProductsInOrder {
@@ -134,7 +135,9 @@ model FulfillmentOrder {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  shipments Shipment[]
+  shipments           Shipment[]
+  purchaseOrder       PurchaseOrder @relation(fields: [purchaseOrderNumber], references: [poNumber])
+  purchaseOrderNumber String        @unique
 }
 
 model Shipment {
@@ -146,9 +149,9 @@ model Shipment {
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
 
-  shipment   FulfillmentOrder     @relation(fields: [shipmentId], references: [id])
-  shipmentId Int
-  products   ProductsInShipment[]
+  order    FulfillmentOrder     @relation(fields: [orderId], references: [id])
+  orderId  Int
+  products ProductsInShipment[]
 }
 
 model ProductsInShipment {
@@ -165,10 +168,11 @@ model ProductsInShipment {
 }
 
 model Invoice {
-  id        Int      @id @default(autoincrement())
+  id Int @id @default(autoincrement())
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  purchaseOrder   PurchaseOrder @relation(fields: [purchaseOrderId], references: [id])
-  purchaseOrderId Int           @unique
+  purchaseOrder       PurchaseOrder @relation(fields: [purchaseOrderNumber], references: [poNumber])
+  purchaseOrderNumber String        @unique
 }
