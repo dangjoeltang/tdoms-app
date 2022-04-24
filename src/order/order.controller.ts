@@ -23,7 +23,16 @@ export class OrderController {
 
   @Get('/')
   async getAllOrders(): Promise<OrderModel[]> {
-    const params = {};
+    const params = {
+      include: {
+        client: {
+          select: {
+            name: true,
+            accountNumber: true,
+          },
+        },
+      },
+    };
     return this.orderService.fetchMany(params);
   }
 
