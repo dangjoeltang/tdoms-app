@@ -1,6 +1,10 @@
 import { PrismaClient } from '@prisma/client';
 import { products } from '../utils/seed/products.seed';
-import { contacts } from '../utils/seed/contacts.seed';
+import {
+  generateClients,
+  generateContacts,
+  generateOrders,
+} from './seed.generators';
 
 const prisma = new PrismaClient();
 
@@ -25,14 +29,35 @@ async function main() {
     }),
   );
 
-  const contactCollection = await prisma.$transaction(
-    contacts.map((contact) =>
-      prisma.contact.upsert({
-        where: { email: contact.email },
+  // const contacts = generateContacts(20);
+  // const contactCollection = await prisma.$transaction(
+  //   contacts.map((contact) =>
+  //     prisma.contact.upsert({
+  //       where: { email: contact.email },
+  //       update: {},
+  //       create: contact,
+  //     }),
+  //   ),
+  // );
+
+  const clients = generateClients(5);
+  const clientCollection = await prisma.$transaction(
+    clients.map((client) => {
+      return prisma.client.upsert({
+        where: { name: client.name },
         update: {},
-        create: contact,
-      }),
-    ),
+        create: {
+          ...client,
+          addresses: {},
+          contacts: {
+            create: generateContacts(Math.floor(Math.random() * 5)),
+          },
+          orders: {
+            create: generateOrders(Math.floor(Math.random() * 10)),
+          },
+        },
+      });
+    }),
   );
 
   const client = await prisma.client.upsert({
@@ -77,29 +102,10 @@ async function main() {
         ],
       },
       contacts: {
-        create: [
-          {
-            name: 'Joel',
-            phone: '512-555-1212',
-          },
-        ],
+        create: generateContacts(2),
       },
       orders: {
-        create: [
-          {
-            poNumber: 'PO-123',
-            salesRepName: 'Harrah',
-            paymentTerms: 'Net 30',
-            status: 'Open',
-            // products: {
-            //   connect: [
-            //     { id: 1 },
-            //     // { id: manyProducts[4].id },
-            //     // { id: manyProducts[8].id },
-            //   ],
-            // },
-          },
-        ],
+        create: generateOrders(7),
       },
     },
   });
