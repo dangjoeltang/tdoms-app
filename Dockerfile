@@ -1,4 +1,4 @@
-FROM node:14 AS builder
+FROM --platform=linux/amd64 node:14-alpine AS builder
 
 WORKDIR /app
 
@@ -11,7 +11,7 @@ COPY . .
 
 RUN npm run build
 
-FROM node:14
+FROM --platform=linux/amd64 node:14-alpine
 
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package*.json ./
@@ -22,3 +22,4 @@ EXPOSE 3000
 # CMD [ "npm", "run", "start:db:reset" ]
 # CMD [ "npm", "run", "start:db:init" ]
 CMD [ "npm", "run", "start:prod" ]
+# CMD npm run start:prod $PORT
