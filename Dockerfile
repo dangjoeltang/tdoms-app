@@ -19,7 +19,12 @@ COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/prisma ./prisma
 
 EXPOSE 3000
-# CMD [ "npm", "run", "start:db:reset" ]
+
+# Use db:reset to reset the database, apply migrations, and then seed.
+# Use start:prod to run migrations against deployment.
+CMD [ "npm", "run", "start:db:reset" ]
+# CMD [ "npm", "run", "start:prod" ]
+
+
 # CMD [ "npm", "run", "start:db:init" ]
-CMD [ "npm", "run", "start:prod" ]
 # CMD npm run start:prod $PORT

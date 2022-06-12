@@ -45,6 +45,36 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
+## Running with Docker locally
+
+- Use docker compose up to spin up docker containers for tdoms-app and postgres13
+
+Make changes to code, and then run
+
+```
+docker compose up --build
+```
+
+## Reset and Seed DB with Docker Compose
+
+Change the `CMD` command in the Dockerfile from
+
+```
+CMD [ "npm", "run", "start:prod" ]
+```
+
+to
+
+```
+CMD [ "npm", "run", "start:db:reset" ]
+```
+
+then run
+
+```
+docker compose up --build
+```
+
 ## Test
 
 ```bash
@@ -57,6 +87,13 @@ $ npm run test:e2e
 # test coverage
 $ npm run test:cov
 ```
+
+## How to Deploy
+
+- Ensure that you are logged into Heroku CLI `heroku login`
+- Log in to the container registry `heroku container:login`
+- Build the image and push to Container Registry: `heroku container:push web`
+- When you are ready to release: `heroku container:release web`
 
 ## Support
 

@@ -1,28 +1,25 @@
 import { PrismaClient } from '@prisma/client';
-import { products } from '../utils/seed/products.seed';
 import {
   generateClients,
   generateContacts,
   generateOrders,
+  generatePricing,
+  generateProducts,
 } from './seed.generators';
 
 const prisma = new PrismaClient();
 
 async function main() {
+  const products = generateProducts(25);
   const productCollection = await prisma.$transaction(
-    products.map((productSeed) => {
-      const { retailPrice, wholesalePrice, cost, ...product } = productSeed;
+    products.map((product) => {
       return prisma.product.upsert({
         where: { modelNumber: product.modelNumber },
         update: {},
         create: {
           ...product,
           pricing: {
-            create: {
-              retailPrice: retailPrice,
-              wholesalePrice: wholesalePrice,
-              cost: cost,
-            },
+            create: generatePricing(),
           },
         },
       });
