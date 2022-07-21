@@ -9,16 +9,21 @@ import {
   Query,
   ParseIntPipe,
 } from '@nestjs/common';
-import { PurchaseOrder as OrderModel } from '@prisma/client';
+import { Prisma, PurchaseOrder as OrderModel } from '@prisma/client';
 import { OrderService } from './order.service';
+
+const orderWithRows = Prisma.validator<Prisma.PurchaseOrderArgs>()({
+  include: { products: true },
+});
+type OrderWithRows = Prisma.PurchaseOrderGetPayload<typeof orderWithRows>;
 
 @Controller('orders')
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
-  @Get('/:id')
-  async getOrder(@Param('id') id: string): Promise<OrderModel> {
-    return this.orderService.fetchOne({ id: Number(id) });
+  @Get('/:poNumber')
+  async getOrder(@Param('poNumber') poNumber: string): Promise<OrderModel> {
+    return this.orderService.fetchOne({ poNumber: poNumber });
   }
 
   @Get('/')
@@ -53,19 +58,21 @@ export class OrderController {
     return this.orderService.createOrder(newOrder);
   }
 
-  @Put('/:id')
+  @Put('/:poNumber')
   async updateOrder(
-    @Param('id') id: string,
-    @Body() data: OrderModel,
+    @Param('poNumber') poNumber: string,
+    @Body() data: OrderWithRows,
   ): Promise<OrderModel> {
+    const { products, ...orderData } = data;
     return this.orderService.updateOrder({
-      where: { id: Number(id) },
-      data,
+      where: { poNumber: poNumber },
+      order: orderData,
+      orderRows: products,
     });
   }
 
-  @Delete('/:id')
-  async deleteOrder(@Param('id') id: string): Promise<OrderModel> {
-    return this.orderService.deleteOrder({ id: Number(id) });
+  @Delete('/:poNumber')
+  async deleteOrder(@Param('poNumber') poNumber: string): Promise<OrderModel> {
+    return this.orderService.deleteOrder({ poNumber: poNumber });
   }
 }

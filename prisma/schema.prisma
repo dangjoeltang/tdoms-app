@@ -61,39 +61,40 @@ model Client {
 
 model PurchaseOrder {
   id           Int      @id @default(autoincrement())
-  poNumber     String?  @unique @db.VarChar(255)
+  poNumber     String   @unique @db.VarChar(255)
   salesRepName String?  @db.VarChar(255)
   paymentTerms String?  @db.VarChar(255)
   status       String?  @db.VarChar(255)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  client       Client            @relation(fields: [clientId], references: [id])
+  client       Client             @relation(fields: [clientId], references: [id])
   clientId     Int
-  products     ProductsInOrder[]
+  products     PurchaseOrderRow[]
   invoice      Invoice?
   fullfillment FulfillmentOrder?
 }
 
-model ProductsInOrder {
-  id          Int      @id @default(autoincrement())
-  description String?  @db.VarChar(255)
-  quantity    Int?
-  price       Int?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+model PurchaseOrderRow {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  quantity  Int?     @default(1)
 
-  order     PurchaseOrder @relation(fields: [orderId], references: [id])
-  orderId   Int
-  product   Product       @relation(fields: [productId], references: [id])
-  productId Int
+  order         PurchaseOrder @relation(fields: [poNumber], references: [poNumber])
+  poNumber      String
+  // product   Product       @relation(fields: [productId, productName], references: [id, name])
+  product       Product       @relation(fields: [productNumber], references: [modelNumber])
+  // productId Int
+  productNumber String
+  @@unique([poNumber, productNumber])
 }
 
 model Product {
   id                  Int       @id @default(autoincrement())
   type                String?   @db.VarChar(255)
   modelNumber         String?   @unique @db.VarChar(255)
-  name                String?   @db.VarChar(255)
+  name                String?   @unique @db.VarChar(255)
   note                String?
   stockQuantity       Int?
   nextRestockDate     DateTime? @db.Date
@@ -112,7 +113,7 @@ model Product {
   updatedAt           DateTime  @updatedAt
 
   pricing   ProductPricing?
-  orders    ProductsInOrder[]
+  orders    PurchaseOrderRow[]
   shipments ProductsInShipment[]
 }
 
