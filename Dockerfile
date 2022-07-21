@@ -22,8 +22,8 @@ EXPOSE 3000
 
 # Use db:reset to reset the database, apply migrations, and then seed.
 # Use start:prod to run migrations against deployment.
-CMD [ "npm", "run", "start:db:reset" ]
-# CMD [ "npm", "run", "start:prod" ]
+# CMD [ "npm", "run", "start:db:reset" ]
+CMD [ "npm", "run", "start:prod" ]
 
 
 # CMD [ "npm", "run", "start:db:init" ]
