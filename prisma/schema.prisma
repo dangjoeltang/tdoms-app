@@ -83,9 +83,7 @@ model PurchaseOrderRow {
 
   order         PurchaseOrder @relation(fields: [poNumber], references: [poNumber])
   poNumber      String
-  // product   Product       @relation(fields: [productId, productName], references: [id, name])
   product       Product       @relation(fields: [productNumber], references: [modelNumber])
-  // productId Int
   productNumber String
   @@unique([poNumber, productNumber])
 }

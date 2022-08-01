@@ -6,8 +6,6 @@ import {
   Body,
   Put,
   Delete,
-  Query,
-  ParseIntPipe,
 } from '@nestjs/common';
 import { Prisma, PurchaseOrder as OrderModel } from '@prisma/client';
 import { OrderService } from './order.service';
@@ -42,22 +40,21 @@ export class OrderController {
   }
 
   @Post('/')
-  async createOrder(
-    @Query('client', ParseIntPipe) client: number,
-    @Body() data: OrderModel,
-  ): Promise<OrderModel> {
+  async createOrder(@Body() data: OrderModel): Promise<OrderModel> {
+    const { clientId, ...orderData } = data;
     const newOrder = {
       client: {
         connect: {
-          id: Number(client),
+          id: clientId,
         },
       },
-      ...data,
+      ...orderData,
     };
 
     return this.orderService.createOrder(newOrder);
   }
 
+  // Need to put in logic for when trying to change the PO Number, it needs to reference using the id instead of the current PO Number
   @Put('/:poNumber')
   async updateOrder(
     @Param('poNumber') poNumber: string,

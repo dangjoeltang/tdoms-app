@@ -6,6 +6,9 @@ import {
   Body,
   Put,
   Delete,
+  Query,
+  ParseBoolPipe,
+  DefaultValuePipe,
 } from '@nestjs/common';
 import { ClientService } from './client.service';
 import { Client as ClientModel } from '@prisma/client';
@@ -20,7 +23,18 @@ export class ClientController {
   }
 
   @Get('/')
-  async getAllClients(): Promise<ClientModel[]> {
+  async getAllClients(
+    @Query('referenceOnly', new DefaultValuePipe(false), ParseBoolPipe)
+    referenceOnly?: boolean,
+  ): Promise<ClientModel[]> {
+    const params = {
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        accountNumber: true,
+      },
+    };
     return this.clientService.fetchAll({});
   }
 

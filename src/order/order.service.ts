@@ -1,10 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { PrismaService } from 'nestjs-prisma';
 import { PurchaseOrder, PurchaseOrderRow, Prisma } from '@prisma/client';
+import { OrderRowService } from 'src/order-row/order-row.service';
 
 @Injectable()
 export class OrderService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private readonly rowService: OrderRowService,
+  ) {}
 
   async fetchOne(
     orderWhereUniqueInput: Prisma.PurchaseOrderWhereUniqueInput,
@@ -56,28 +60,9 @@ export class OrderService {
     orderRows: PurchaseOrderRow[];
   }): Promise<PurchaseOrder> {
     const { where, order, orderRows } = params;
-    await this.prisma.$transaction(
-      orderRows.map((product) => {
-        return this.prisma.purchaseOrderRow.upsert({
-          // Need a better way to get the orderRow id's so I can change the producId if needed.
-          // Changing the productId is treated as a new row.
-          // Need a way to delete orderRows, maybe add logic for when quantity is set to 0
-          where: {
-            poNumber_productNumber: {
-              poNumber: where.poNumber,
-              productNumber: product.productNumber,
-            },
-          },
-          create: {
-            productNumber: product.productNumber,
-            quantity: product.quantity,
-            poNumber: where.poNumber,
-            // ...product,
-          },
-          update: { ...product },
-        });
-      }),
-    );
+    await this.rowService.updateOrCreateMany(where.poNumber, {
+      data: orderRows,
+    });
     return this.prisma.purchaseOrder.update({
       data: order,
       where,
