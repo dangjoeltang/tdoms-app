@@ -1,7 +1,9 @@
+import { faker } from '@faker-js/faker';
 import { PrismaClient } from '@prisma/client';
 import {
   generateClients,
   generateContacts,
+  generateOrderRows,
   generateOrders,
   generatePricing,
   generateProducts,
@@ -38,7 +40,7 @@ async function main() {
   // );
 
   const clients = generateClients(5);
-  const clientCollection = await prisma.$transaction(
+  await prisma.$transaction(
     clients.map((client) => {
       return prisma.client.upsert({
         where: { name: client.name },
@@ -49,15 +51,12 @@ async function main() {
           contacts: {
             create: generateContacts(Math.floor(Math.random() * 5)),
           },
-          orders: {
-            create: generateOrders(Math.floor(Math.random() * 10)),
-          },
         },
       });
     }),
   );
 
-  const client = await prisma.client.upsert({
+  const clientKanova = await prisma.client.upsert({
     where: { accountNumber: 'KNVA' },
     update: {},
     create: {
@@ -101,11 +100,52 @@ async function main() {
       contacts: {
         create: generateContacts(2),
       },
-      orders: {
-        create: generateOrders(7),
-      },
     },
   });
+
+  const clientCollection = await prisma.client.findMany({
+    select: {
+      id: true,
+      name: true,
+      accountNumber: true,
+    },
+  });
+
+  // loop through clients and create a transaction for orders for each one
+  clientCollection.map(async (client) => {
+    const ordersData = generateOrders(
+      faker.datatype.number({ min: 1, max: 3 }),
+    );
+    await prisma.$transaction(
+      ordersData.map((order) => {
+        const productNumberSet = new Set(
+          productCollection.map((product) => product.modelNumber),
+        );
+        const orderRowsData = generateOrderRows(3, productNumberSet);
+
+        return prisma.purchaseOrder.create({
+          data: {
+            ...order,
+            client: {
+              connect: {
+                id: client.id,
+              },
+            },
+            products: {
+              create: orderRowsData,
+            },
+          },
+        });
+      }),
+    );
+  });
+
+  // const orderCollection = await prisma.purchaseOrder.findMany({
+  //   select: {
+  //     poNumber: true,
+  //     id: true,
+  //   },
+  // });
 }
 
 main()

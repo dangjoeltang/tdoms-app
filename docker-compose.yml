@@ -10,19 +10,19 @@ services:
     # network_mode: host
     env_file:
       - .env
-    depends_on:
-      - postgres
-  postgres:
-    image: postgres:13
-    container_name: postgres
-    restart: always
-    ports:
-      - 5432:5432
-    env_file:
-      - .env
-    volumes:
-      - postgres:/var/lib/postgresql/data
+#     depends_on:
+#       - postgres
+#   postgres:
+#     image: postgres:13
+#     container_name: postgres
+#     restart: always
+#     ports:
+#       - 5432:5432
+#     env_file:
+#       - .env
+#     volumes:
+#       - postgres:/var/lib/postgresql/data
 
-volumes:
-  postgres:
-    name: tdoms-db
+# volumes:
+#   postgres:
+#     name: tdoms-db

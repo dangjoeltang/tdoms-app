@@ -5,6 +5,17 @@ export interface Order {
   status: string;
 }
 
+export interface OrderRow {
+  quantity: number;
+  poNumber: string;
+  productNumber: string;
+}
+
+export interface OrderRowWithoutPoNumber {
+  quantity: number;
+  productNumber: string;
+}
+
 export interface Contact {
   name: string;
   phone: string;

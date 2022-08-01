@@ -56,7 +56,7 @@ export class OrderService {
     orderRows: PurchaseOrderRow[];
   }): Promise<PurchaseOrder> {
     const { where, order, orderRows } = params;
-    const updateRows = await this.prisma.$transaction(
+    await this.prisma.$transaction(
       orderRows.map((product) => {
         return this.prisma.purchaseOrderRow.upsert({
           // Need a better way to get the orderRow id's so I can change the producId if needed.

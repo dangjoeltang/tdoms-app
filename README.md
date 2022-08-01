@@ -24,7 +24,36 @@
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+This application is contained within a deployable Docker container that is hosted on Heroku. The PostgreSQL database is hosted on heroku as well, with a dev environment hosted on Supabase.
+
+## Setup
+
+Make sure that the .env file is correctly configured. To get started, make a copy of the template.env file and enter the appropriate credentials
+
+The QA database is hosted on Heroku, and the Dev database is hosted on Supabase.
+
+- This is to allow for viewing the database using the Supabase GUI.
+- To switch between them, simply change the `DATABASE_URL` entry in the `.env` config
+
+Database migrations/resets/updates can be done by simply pointing the local config to the appropriate database in the `.env` file, and running the appropriate npm commands.
+
+### Migration/Reset/Update Commands
+
+```bash
+# reset and push new changes (without migration)
+$ npx prisma db push
+
+# seed newly pushed DB
+$ npx prisma db seed
+
+# perform migration (Dev)
+$ npx prisma migrate dev
+
+# perform migration (Prod) -- Wont be used yet, since everything is still under development
+$ npx prisma migrate deploy
+
+
+```
 
 ## Installation
 

@@ -1,5 +1,14 @@
 import { faker } from '@faker-js/faker';
-import { Client, Contact, Order, Product, ProductPricing } from './seed.types';
+import { PrismaClient } from '@prisma/client';
+import {
+  Client,
+  Contact,
+  Order,
+  OrderRow,
+  OrderRowWithoutPoNumber,
+  Product,
+  ProductPricing,
+} from './seed.types';
 
 export const generateProducts = (count: number): Product[] => {
   const products: Product[] = [];
@@ -9,19 +18,19 @@ export const generateProducts = (count: number): Product[] => {
       modelNumber: faker.random.alphaNumeric(5).toLocaleUpperCase(),
       name: faker.commerce.productName(),
       note: faker.lorem.sentence(),
-      stockQuantity: faker.random.number({ min: 0, max: 10 }),
+      stockQuantity: faker.datatype.number({ min: 0, max: 10 }),
       nextRestockDate: faker.date.future(),
-      nextRestockQuantity: faker.random.number({ min: 5, max: 10 }),
+      nextRestockQuantity: faker.datatype.number({ min: 5, max: 10 }),
       bulbCount: faker.random.arrayElement([3, 4, 5, 6, 8, 10]),
       finish: faker.commerce.productMaterial(),
-      grossWeight: faker.random.number({ min: 5, max: 100 }),
-      pkgLength: faker.random.number({ min: 5, max: 25 }),
-      pkgWidth: faker.random.number({ min: 5, max: 25 }),
-      pkgHeight: faker.random.number({ min: 5, max: 25 }),
-      netWeight: faker.random.number({ min: 5, max: 100 }),
-      unitLength: faker.random.number({ min: 5, max: 25 }),
-      unitWidth: faker.random.number({ min: 5, max: 25 }),
-      unitHeight: faker.random.number({ min: 5, max: 25 }),
+      grossWeight: faker.datatype.number({ min: 5, max: 100 }),
+      pkgLength: faker.datatype.number({ min: 5, max: 25 }),
+      pkgWidth: faker.datatype.number({ min: 5, max: 25 }),
+      pkgHeight: faker.datatype.number({ min: 5, max: 25 }),
+      netWeight: faker.datatype.number({ min: 5, max: 100 }),
+      unitLength: faker.datatype.number({ min: 5, max: 25 }),
+      unitWidth: faker.datatype.number({ min: 5, max: 25 }),
+      unitHeight: faker.datatype.number({ min: 5, max: 25 }),
     };
     products.push(product);
   }
@@ -29,7 +38,7 @@ export const generateProducts = (count: number): Product[] => {
 };
 
 export const generatePricing = (): ProductPricing => {
-  const retail = faker.random.number({ min: 50, max: 1000 });
+  const retail = faker.datatype.number({ min: 50, max: 1000 });
   const wholesale = retail * 0.8;
   const cost = wholesale * 0.5;
   const price: ProductPricing = {
@@ -75,6 +84,25 @@ export const generateContacts = (count = 3): Contact[] => {
   return contacts;
 };
 
+export const generateOrderRows = (
+  count = 3,
+  prodSet: Set<string>,
+): OrderRowWithoutPoNumber[] => {
+  const rows: OrderRowWithoutPoNumber[] = [];
+  for (let i = 0; i < count; i++) {
+    const prodArr = [...prodSet];
+    const prodNumber =
+      prodArr[faker.datatype.number({ min: 0, max: prodArr.length - 1 })];
+    const row: OrderRowWithoutPoNumber = {
+      quantity: faker.datatype.number({ min: 1, max: 10 }),
+      productNumber: prodNumber,
+    };
+    prodSet.delete(prodNumber);
+    rows.push(row);
+  }
+  return rows;
+};
+
 export const generateClients = (count: number): Client[] => {
   const clients: Client[] = [];
   for (let i = 0; i < count; i++) {
@@ -99,9 +127,6 @@ export const generateClients = (count: number): Client[] => {
           : '',
       discount: Math.random() < 0.5 ? 10 : 0,
       paymentTerms: 'Net 30',
-      // addresses: [],
-      // contacts: [],
-      // orders: [],
     };
     clients.push(client);
   }
