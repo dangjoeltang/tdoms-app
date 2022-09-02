@@ -52,37 +52,38 @@ export class OrderRowService {
     poNumber: string,
     rowsData: OrderRowUpdateMany,
   ): Promise<PurchaseOrderRow[]> {
-    await this.prisma.$transaction(
-      rowsData.data.map((row) => {
-        const poNumber_productNumber = {
-          poNumber,
-          productNumber: row.productNumber,
-        };
-        return row.quantity === 0
-          ? this.prisma.purchaseOrderRow.delete({
-              where: { poNumber_productNumber },
-            })
-          : this.prisma.purchaseOrderRow.upsert({
-              where: { poNumber_productNumber },
-              create: {
-                order: {
-                  connect: {
-                    poNumber,
+    return rowsData.data
+      ? await this.prisma.$transaction(
+          rowsData.data.map((row) => {
+            const poNumber_productNumber = {
+              poNumber,
+              productNumber: row.productNumber,
+            };
+            return row.quantity === 0
+              ? this.prisma.purchaseOrderRow.delete({
+                  where: { poNumber_productNumber },
+                })
+              : this.prisma.purchaseOrderRow.upsert({
+                  where: { poNumber_productNumber },
+                  create: {
+                    order: {
+                      connect: {
+                        poNumber,
+                      },
+                    },
+                    product: {
+                      connect: {
+                        modelNumber: row.productNumber,
+                      },
+                    },
                   },
-                },
-                product: {
-                  connect: {
-                    modelNumber: row.productNumber,
+                  update: {
+                    quantity: row.quantity,
                   },
-                },
-              },
-              update: {
-                quantity: row.quantity,
-              },
-            });
-      }),
-    );
-    return this.fetchForOrder({ poNumber });
+                });
+          }),
+        )
+      : null;
   }
 
   async deleteOne(
