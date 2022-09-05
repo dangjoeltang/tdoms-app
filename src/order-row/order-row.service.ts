@@ -76,6 +76,7 @@ export class OrderRowService {
                         modelNumber: row.productNumber,
                       },
                     },
+                    quantity: row.quantity,
                   },
                   update: {
                     quantity: row.quantity,
