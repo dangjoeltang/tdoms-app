@@ -15,6 +15,8 @@ const orderWithRows = Prisma.validator<Prisma.PurchaseOrderArgs>()({
 });
 type OrderWithRows = Prisma.PurchaseOrderGetPayload<typeof orderWithRows>;
 
+type OrderWithClientName = OrderModel & { clientName: string };
+
 @Controller('orders')
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
@@ -40,12 +42,12 @@ export class OrderController {
   }
 
   @Post('/')
-  async createOrder(@Body() data: OrderModel): Promise<OrderModel> {
-    const { clientId, ...orderData } = data;
+  async createOrder(@Body() data: OrderWithClientName): Promise<OrderModel> {
+    const { clientName, ...orderData } = data;
     const newOrder = {
       client: {
         connect: {
-          id: clientId,
+          name: clientName,
         },
       },
       ...orderData,

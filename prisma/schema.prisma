@@ -63,8 +63,8 @@ model PurchaseOrder {
   id           Int      @id @default(autoincrement())
   poNumber     String   @unique @db.VarChar(255)
   salesRepName String?  @db.VarChar(255)
-  paymentTerms String?  @db.VarChar(255)
-  status       String?  @db.VarChar(255)
+  paymentTerms String   @db.VarChar(255)
+  status       String   @default("Open") @db.VarChar(255)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
@@ -85,6 +85,7 @@ model PurchaseOrderRow {
   poNumber      String
   product       Product       @relation(fields: [productNumber], references: [modelNumber])
   productNumber String
+
   @@unique([poNumber, productNumber])
 }
 
